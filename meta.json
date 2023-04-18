@@ -1,0 +1,11 @@
+{
+    "license": "GNU GPL",
+    "author": "Nekoill",
+    "contact_info": [
+        "i@nekoill.ru",
+        "muisance@outlook.com",
+        "https://t.me/@nekoill"
+    ],
+    "version": 0.1,
+    "sauce_repo": "https://gitlab.com/nekoill/jenkins-first"
+}
