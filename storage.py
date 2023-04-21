@@ -1,20 +1,48 @@
-import pathlib
+import os.path as osp
 import getopt
 import json
 import sys
 
-STORAGE_PATH = pathlib.Path('storage.data')
-print(STORAGE_PATH)
+storage = osp.abspath(__file__).replace('/storage.py', '/storage.data')
+meta = osp.abspath(__file__).replace('/storage.py', '/meta.json')
 
-METADATA_PATH = pathlib.Path('meta.json')
-print(METADATA_PATH)
 
-if not STORAGE_PATH.exists() or STORAGE_PATH.read() == '' or STORAGE_PATH.get('version') == '':
+def usage():
+    usage_message = "\nUSAGE:\n"
+    usage_pt1 = "\tstorage.py -h/--help\t\t\tCall this help and exit\n"
+    usage_pt2 = "\tstorage.py -k/--key [KEY]\t\tGet the value of the key\n"
+    usage_pt3 = "\tstorage.py -s/--set [KEY] [VALUE]\tSet the value of the key\n"  # noqa: E501
+    usage_pt4 = "\tstorage.py -d/--delete [KEY]\t\tDelete the key\n"
+    print(usage_message, usage_pt1, usage_pt2, usage_pt3, usage_pt4)
+    return {}
+
+
+def versioning() -> str:
+    try:
+        with open(meta, 'r', encoding='utf-8') as R:
+            R_contents = json.load(R)
+
+            if R_contents["version"]:
+                print(f'\n\t\tVersion:\t\t\t{R_contents["version"]}')
+                # - `[Error(101)]` means "`README_PATHmd` file exists,
+                # but version is not defined within it"
+                # - `[Error(102)]` means "`README.md` file doesn't exist at all,    # noqa: E501
+                # or has an unexpected name (i.e. *NOT* `meta.json`),
+                # or is in an unexpected location"
+
+            if R_contents["version"] == '' or not R_contents["version"]:
+                return '\n\t[Error(101)]:\tCannot read app version (`version` field can not be located in a file),\n\t\tplz contact the ret^W dev\n'  # noqa: E501
+    except FileNotFoundError:
+        return '\n\t[Error(102)]:\tCannot read app version (`meta.json` file does not exist,\n\t\thas an unexpected name or is placed in an unexpected location),\n\t\tplz contact the ret^W dev\n'  # noqa: E501
+
+
+"""
+if not storage.exists() or storage.read() == '' or storage.get('version') == '':  # noqa: E501
     print('\n\tNo database file seems to exist\n')
     i = input('\tDo you want to create one (with some test data)? [Y/n]: ')
 
     if i in 'Y' or not i:
-        with open(STORAGE_PATH, 'x', encoding='utf-8') as OPEN_STORAGE:
+        with open(storage, 'x', encoding='utf-8') as OPEN_STORAGE:
             test_data = {
                 1: 'first',
                 2: 2,
@@ -29,37 +57,9 @@ if not STORAGE_PATH.exists() or STORAGE_PATH.read() == '' or STORAGE_PATH.get('v
                 indent=4
             )
             print(
-                f'\n\t\tStorage file created in this directory ({pathlib.Path(__file__)})')
+                f'\n\t\tStorage file created in this directory ({osp.curdir(__file__)})')
             print(OPEN_STORAGE)
 
-
-def versioning() -> str:
-    try:
-        with open(METADATA_PATH, 'r', encoding='utf-8') as R:
-            R_contents = json.load(R)
-
-            if R_contents["version"]:
-                print(f'\n\t\tVersion:\t\t\t{R_contents["version"]}')
-                # * - `[Error(101)]` means "`README_PATHmd` file exists,
-                # * but version is not defined within it"
-                # * - `[Error(102)]` means "`README.md` file doesn't exist at all,
-                # * or has an unexpected name (i.e. *NOT* `meta.json`),
-                # * or is in an unexpected location"
-
-            if R_contents["version"] == '' or not R_contents["version"]:
-                return f'\n\t[Error(101)]:\tCannot read app version (`version` field can not be located in a file),\n\t\tplz contact the ret^W dev\n'
-    except FileNotFoundError:
-        return f'\n\t[Error(102)]:\tCannot read app version (`meta.json` file does not exist,\n\t\thas an unexpected name or is placed in an unexpected location),\n\t\tplz contact the ret^W dev\n'
-
-
-def usage() -> str:
-    usage_message: str = "\nUSAGE:\n"
-    usage_pt1: str = "\tstorage.py -h/--help\t\t\tCall this help and exit\n"
-    usage_pt2: str = "\tstorage.py -k/--key [KEY]\t\tGet the value of the key\n"
-    usage_pt3: str = "\tstorage.py -s/--set [KEY] [VALUE]\tSet the value of the key\n"
-    usage_pt4: str = "\tstorage.py -d/--delete [KEY]\t\tDelete the key\n"
-    print(usage_message, usage_pt1, usage_pt2, usage_pt3, usage_pt4)
-    return {}
 
 
 def handle_usage(*args: str | list[str]) -> None:
@@ -100,23 +100,49 @@ def read_storage(store: __path__) -> dict:
 
 
 def write_storage(store: __path__) -> dict:
-    return STORAGE_PATH.write(store)
+    return storage.write(store)
 
 
 def update_storage(store: __path__):
-    return STORAGE_PATH.update(store)
+    return storage.update(store)
 
 
 def main() -> dict:
-    if not STORAGE_PATH.exists():
-        with open(STORAGE_PATH, 'x', encoding='utf-8') as open_storage:
+    if not storage.exists():
+        with open(storage, 'x', encoding='utf-8') as open_storage:
             json.dump(open_storage,)
     else:
-        with open(STORAGE_PATH, 'r') as read_storage:
-            STORAGE_PATH.update(read_storage)
+        with open(storage, 'r') as read_storage:
+            storage.update(read_storage)
 
-    return STORAGE_PATH
+    return storage
+"""
 
+
+def main():
+    try:
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            'hcVvvlk:v:s:',
+            [
+                'help',
+                'create',
+                'verbose',
+                'version',
+                'list',
+                'key=',
+                'val='
+            ],
+        )
+    except getopt.GetoptError as err:
+        usage()
+        print(err)
+        sys.exit(err)
+    usage()
+    for opt in opts:
+        if opt in ('-h', '--help') or args[0] == '--help':
+            usage()
+            sys.exit(0)
 
 if __name__ == '__main__':
     main()
