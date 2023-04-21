@@ -1,4 +1,5 @@
 import os.path as osp
+import pathlib
 import getopt
 import json
 import sys
@@ -118,6 +119,36 @@ def main() -> dict:
     return storage
 """
 
+with open(storage, 'r', encoding='utf-8') as open_storage:
+    contents = open_storage.read()
+
+    if contents == '':
+
+        print('\n\tNo database file seems to exist\n')
+        i = input('\tDo you want to create one (with some test data)? [Y/n]: ')
+
+        if not i or i.lower() == 'y':
+            dummy_data = {
+                1: 'first',
+                2: [0, 1, 4, 8, 34, 42, 69, 420],
+                3: '3',
+                4: {'4.1': True, '4.2': None},
+                5: ['one', 'two']
+            }
+            with open(storage, 'w', encoding='utf-8') as open_storage:
+                json.dump(dummy_data, open_storage, indent=4)
+                print('\n=======================================================\n')  # noqa: E501
+                print(f'\t\tDatabase created:\n\n{storage}\n')
+        elif i.lower() == 'n':
+            print('\n\tYou can point to a storage file in a non-default location')
+            choice = input('\n\t\tDo you want to specify a path? [Y/n]: ')
+
+            if choice.lower() == 'y' or not choice:
+                path = input('\n\tEnter the file path: ')
+                storage = path
+    print('G\'bye!')
+    sys.exit(0)
+
 
 def main():
     try:
@@ -143,6 +174,10 @@ def main():
         if opt in ('-h', '--help') or args[0] == '--help':
             usage()
             sys.exit(0)
+
+        if opt in ('-V', '--version'):
+            versioning()
+
 
 if __name__ == '__main__':
     main()

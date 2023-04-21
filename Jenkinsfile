@@ -5,13 +5,13 @@ pipeline {
         stage('Clone') {
             steps {
                 git branch:'senpai'
-                url:'https://gitlab.com/nekoill/keyvalstopy.git'
+                url:'https://gitlab.com/nekoill/keyvastopy.git'
             }
         }
         stage('Build') {
             steps {
             sh '''
-            docker build -t keyvalstopy:${BUILD_NUMBER}
+            docker build -t keyvastopy:${BUILD_NUMBER}
             '''
             }
         }
