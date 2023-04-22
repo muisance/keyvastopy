@@ -6,14 +6,14 @@ import sys
 storage = f'{osp.dirname(__file__)}/storage.data'
 meta = f'{osp.dirname(__file__)}/meta.json'
 
-with open(meta, 'r', encoding='utf-8') as storage_open:
-    contents = json.load(storage_open)
+with open(meta, 'r', encoding='utf-8') as meta_open:
+    contents = json.load(meta_open)
     if not contents or contents['version'] == '':
         print('\n\tNo database file seems to exist\n')
         i = input('\tDo you want to create one (with some test data)? [Y/n]: ')
 
         if i in 'Y' or not i:
-            with open(storage, 'x', encoding='utf-8') as open_storage:
+            with open(storage, 'x', encoding='utf-8') as storage_open:
                 dummy_data = {
                     1: 'first',
                     2: 2,
@@ -24,12 +24,13 @@ with open(meta, 'r', encoding='utf-8') as storage_open:
                 }
                 json.dump(
                     dummy_data,
-                    open_storage,
+                    storage_open,
                     indent=4
                 )
                 print(
-                    f'\n\t\tStorage file created in ({osp.curdir(__file__)})')
-                print(open_storage)
+                    f'\n\t\tStorage file created in {osp.dirname(__file__)}'
+                )
+                print(storage_open)
 
 
 def usage():
@@ -101,9 +102,17 @@ def storage_check():
                     # pathlib.Path(path).parent.mkdir(parents=True)
 
 
+def get_value_by_key(opt: str) -> str:
+    with open(storage, 'r', encoding='utf-8') as storage_open:
+        result = json.load(storage_open)
+        print(f'\n\t\t\t\t\tResult:\n\n\t\t\t{opt}: {result[opt]}\t\n')
+        return result[opt]
+
+
 def main():
     print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
     print('\n\t\tKeyVaStoPy -- a hastily designed key-value storage')
+    print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
     storage_check()
 
     try:
@@ -126,11 +135,12 @@ def main():
         for opt, arg in opts:
             if opt in ('-h', '--help'):
                 usage()
-            elif opt in {'-v', '--version'}:
+            elif opt in ('-v', '--version'):
                 ver()
-            elif opt in {'-l', '--list'}:
+            elif opt in ('-l', '--list'):
                 list_stored()
-            # elif opt 
+            elif opt == '--key':
+                get_value_by_key(arg)
             # elif str(opt) == '--key':
                 # with open(storage, mode='r', encoding='utf-8') as open_storage:  # noqa: E501
                 # storage_contents = json.load(open_storage)
