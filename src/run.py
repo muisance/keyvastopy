@@ -1,3 +1,3 @@
 from fastapi import FastAPI
-
-app = FastAPI("")
+from app.storage import handle_usage
+import uvicorn

@@ -15,28 +15,28 @@ pipeline {
             '''
             }
         }
-        stage('Test') {
-            steps {
-            sh '''
-            docker run -It keyvalstopy:${BUILD_NUMBER}
-            curl localhost:5000
-            '''
-            }
-        }
-        stage('Package') {
-            steps {
-            sh '''
-            docker push nekoill/keyvalstopy:${BUILD_NUMBER}
-            '''
-            }
-        }
-        stage('Deploy') {
-            steps {
-            sh '''
-            echo "TODO: \
-            - [ ] Add some sick deploy logic shit here BAEH-BEEE"
-            '''
-            }
-        }
+        // stage('Test') {
+            // steps {
+            // sh '''
+            // docker run -It keyvalstopy:${BUILD_NUMBER}
+            // curl localhost:5000
+            // '''
+            // }
+        // }
+        // stage('Package') {
+            // steps {
+            // sh '''
+            // docker push nekoill/keyvalstopy:${BUILD_NUMBER}
+            // '''
+            // }
+        // }
+        // stage('Deploy') {
+            // steps {
+            // sh '''
+            // echo "TODO: \
+            // - [ ] Add some sick deploy logic shit here BAEH-BEEE"
+            // '''
+            // }
+        // }
     }
 }

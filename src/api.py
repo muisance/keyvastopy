@@ -1,16 +1,22 @@
 from .app.storage import usage, versioning
 from fastapi import FastAPI
+import uvicorn
 
-app = FastAPI('')
+app = FastAPI(
+    title="KeyVaStoPy-API",
+    description="API for KeyVaStoPy data interaction",
+    version="0.1",
+    servers=["127.0.0.1"]
+)
 
 
 @app.get('/')
-async def index():
+def index():
     return {'message': 'Great Success!'}
 
 
 @app.get('/use')
-async def use():
+def use():
     return {
         'message': 'Great Success!',
         'usage': usage()
@@ -18,7 +24,7 @@ async def use():
 
 
 @app.get('/ver')
-async def version():
+def version():
     return {
         'message': 'Great Success!',
         'version': versioning()
@@ -26,8 +32,12 @@ async def version():
 
 
 @app.get('/{key}')
-async def get_value_by_key():
+def get_value_by_key():
     return {
         'message': 'Great Success!',
-        'data': {value}
+        'data': {}
     }
+
+
+if __name__ == '__main__':
+    uvicorn.run(app)
