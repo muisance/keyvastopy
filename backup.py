@@ -6,37 +6,14 @@ import sys
 storage = f'{osp.dirname(__file__)}/storage.data'
 meta = f'{osp.dirname(__file__)}/meta.json'
 
-"""
-with open(meta, 'r', encoding='utf-8') as meta_open:
-    contents = json.load(meta_open)
-    if not contents or contents['version'] == '':
-        print('\n\tNo database file seems to exist\n')
-        i = input('\tDo you want to create one (with some test data)? [Y/n]: ')
-
-        if i in 'Y' or not i:
-            with open(storage, 'x', encoding='utf-8') as storage_open:
-                dummy_data = {
-                    1: 'first',
-                    2: 2,
-                    3: [0, 1, 4, 8, 13, 14, 34, 42, 69, 88],
-                    4: None,
-                    5: True,
-                    6: '6'
-                }
-                json.dump(
-                    dummy_data,
-                    storage_open,
-                    indent=4
-                )
-                print(
-                    f'\n\t\tStorage file created in {osp.dirname(__file__)}'
-                )
-                print(storage_open)
-"""
+# with open(meta, 'r', encoding='utf-8') as meta_open:
+# contents = json.load(meta_open)
+# if not contents or contents['version'] == '':
+# print('\n\tCannot determine version')
 
 
 def usage():
-    usage_message = '\n\t\t   USAGE:\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'  # noqa: E501"
+    usage_message = '\n\t\t   USAGE:\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'  # noqa: E501
     usage_pt1 = 'storage -h/--help\t\tDisplay this help\n'
     usage_pt2 = 'storage    --key=[KEY]\t\tGet value of a key\n'
     usage_pt3 = 'storage    --key --val=[VAL]\tSet value of a key\n'  # noqa: E501
@@ -46,10 +23,13 @@ def usage():
 
 
 def ver():
-    with open(meta, 'r', encoding='utf-8') as R:
-        contents = json.load(R)
-        print(f"\t\tVersion: {contents.get('version')}")
-        print('==================================================\n')  # noqa: E501
+    with open(meta, 'r', encoding='utf-8') as meta_open:
+        contents = json.load(meta_open)
+        if not contents or contents == '':
+            print('\n\tCannot determine version')
+        else:
+            print(f"\t\tVersion: {contents.get('version')}")
+            print('==================================================\n')  # noqa: E501
 
 
 def list_stored():
@@ -59,54 +39,76 @@ def list_stored():
         return contents
 
 
-def create_storage_file():
-    with open(storage, 'x', encoding='utf-8') as storage_open:
-        i = input('\tDo you want to create one? [Y/n]: ')
-        if i.lower() in ('y', 'yes'):
-            storage_open.write()
-        elif i.lower() in ('n', 'no'):
-            print('\n\tYou can point to a storage file in a non-default location')  # noqa: E501
-            choice = input('\n\t\tDo you want to specify a path? [Y/n]: ')
-
-            if choice.lower() == 'y' or not choice:
-                path = input('\n\tEnter the file path: ')
-                print(f'\n\t{path}\n\tTODO: - [ ] implement custom path functionality')  # noqa: E501
-
-
 def write_dummy_data_to_storage():
     with open(storage, 'w', encoding='utf-8') as storage_open:
-        i = input('\n\tDo you want to fill storage file with dummy data? [Y/n]: ')  # noqa: E501
+        dummy_data = {
+            1: 'first',
+            2: 2,
+            3: [0, 1, 4, 8, 13, 34, 42, 69, 420],
+            4: {
+                4.1: True,
+                4.2: None
+            },
+            5: (1, 'two', False)
+        }
+        json.dump(dummy_data, storage_open, indent=4)
+        print(
+            f'\n\t\tStorage file created in {storage}'  # noqa: E501 {osp.dirname(__file__)}'
+        )
 
-        if i.lower() in ('y', 'yes') or not i:
-            dummy_data = {
-                1: 'first',
-                2: [0, 1, 4, 8, 34, 42, 69, 420],
-                3: '3',
-                4: {'4.1': True, '4.2': None},
-                5: ['one', 'two']
-            }
-            json.dump(dummy_data, storage_open, indent=4)
-            print('\n=======================================================\n')  # noqa: E501
-            print(f'\t\tStorage created:\n\t{storage}\n')
-        elif i.lower() in ('n', 'no'):
-            print('K thx bye')
-            sys.exit(0)
+
+def create_storage():
+    with open(storage, 'x', encoding='utf-8') as storage_open:
+        contents = json.load(storage_open)
+        if not contents or contents == '':
+            print('\n\tNo database file seems to exist\n')
+            i = input('\tDo you want to fill storage file with test dummy data? [Y/n]: ')  # noqa: E501
+
+            if i.lower() == 'y' or not i:
+                write_dummy_data_to_storage()
+                print(contents)
+
+            elif i.lower() == 'n':
+                print('\n\tYou can point to a storage file in a non-default location')  # noqa: E501
+                choice = input('\n\t\tDo you want to specify a path? [Y/n]: ')
+
+                if choice.lower() == 'y' or not choice:
+                    path = input('\n\tEnter the file path: ')
+                    print(f'\n\t{path}\n\tTODO: - [ ] implement custom path functionality')  # noqa: E501
+                    # pathlib.Path(path).parent.mkdir(parents=True)
 
 
 def storage_check():
-    print('\n\tChecking for a storage file . . .')
-    print('++++++++++++++++++++++++++++++++++++++++++++++++++')  # noqa: E501
-    try:
-        with open(storage, 'r', encoding='utf-8') as storage_file:
-            contents = storage_file.read()
-            if contents != '' and contents is not None:
-                print(f'Storage file located:\n{storage}\n')
-            else:
-                print('\n\tStorage file exists but is empty')
-                write_dummy_data_to_storage()
-    except FileNotFoundError:
-        print('\n\tNo storage file was found')
-        create_storage_file()
+    """
+    with open(storage, 'r', encoding='utf-8') as open_storage:
+        contents = open_storage.read()
+
+        if contents == '':
+            if not i or i.lower() == 'y':
+                dummy_data = {
+                    1: 'first',
+                    2: [0, 1, 4, 8, 34, 42, 69, 420],
+                    3: '3',
+                    4: {'4.1': True, '4.2': None},
+                    5: ['one', 'two']
+                }
+                with open(storage, 'w', encoding='utf-8') as open_storage:
+                    json.dump(dummy_data, open_storage, indent=4)
+                    print('\n=======================================================\n')  # noqa: E501
+                    print(f'\t\tStorage created:\n\n{storage}\n')
+            elif i.lower() == 'n':
+    """
+
+    print('\n\tChecking storage file availability. . .')
+    with open(storage, 'r', encoding='utf-8') as storage_open:
+        if json.load(storage_open) != '':
+            print(f'Storage file located at {storage}')
+            return {}
+        else:
+            print('\n\tNo database file seems to exist\n')
+            i = input('\tDo you want to create one? [Y/n]: ')  # noqa: E501
+            if i.lower() == 'y':
+                create_storage()
 
 
 def get_value_by_key(opt: str) -> str:  # sourcery skip: de-morgan
@@ -114,7 +116,7 @@ def get_value_by_key(opt: str) -> str:  # sourcery skip: de-morgan
         result = json.load(storage_open)
         if opt not in result.keys():
             print(f'\n\t\t\tNo key {opt} was found in the storage\n')
-            print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')  # noqa: E501
+            print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')  # noqa: E501
             sys.exit(1)
         # if opt in result.keys():
         else:
@@ -149,8 +151,8 @@ def write_key_val_pair_to_storage(key, val):
 
 
 def main():
-    print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
-    print('KeyVaStoPy - a hastily designed key-value storage')
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
+    print('KeyVaStoPy -- a hastily designed key-value storage')
     storage_check()
 
     try:
