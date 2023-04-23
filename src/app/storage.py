@@ -6,34 +6,6 @@ import sys
 storage = f'{osp.dirname(__file__)}/storage.data'
 meta = f'{osp.dirname(__file__)}/meta.json'
 
-"""
-with open(meta, 'r', encoding='utf-8') as meta_open:
-    contents = json.load(meta_open)
-    if not contents or contents['version'] == '':
-        print('\n\tNo database file seems to exist\n')
-        i = input('\tDo you want to create one (with some test data)? [Y/n]: ')
-
-        if i in 'Y' or not i:
-            with open(storage, 'x', encoding='utf-8') as storage_open:
-                dummy_data = {
-                    1: 'first',
-                    2: 2,
-                    3: [0, 1, 4, 8, 13, 14, 34, 42, 69, 88],
-                    4: None,
-                    5: True,
-                    6: '6'
-                }
-                json.dump(
-                    dummy_data,
-                    storage_open,
-                    indent=4
-                )
-                print(
-                    f'\n\t\tStorage file created in {osp.dirname(__file__)}'
-                )
-                print(storage_open)
-"""
-
 
 def usage():
     usage_message = '\n\t\t   USAGE:\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'  # noqa: E501"
@@ -70,7 +42,7 @@ def create_storage_file():
 
             if choice.lower() == 'y' or not choice:
                 path = input('\n\tEnter the file path: ')
-                print(f'\n\t{path}\n\tTODO: - [ ] implement custom path functionality')  # noqa: E501
+                print(path)
 
 
 def write_dummy_data_to_storage():
@@ -100,7 +72,7 @@ def storage_check():
         with open(storage, 'r', encoding='utf-8') as storage_file:
             contents = storage_file.read()
             if contents != '' and contents is not None:
-                print(f'Storage file located:\n{storage}\n')
+                print(f'\nStorage file located at:\n{storage}\n')
             else:
                 print('\n\tStorage file exists but is empty')
                 write_dummy_data_to_storage()
@@ -113,8 +85,8 @@ def get_value_by_key(opt: str) -> str:  # sourcery skip: de-morgan
     with open(storage, 'r', encoding='utf-8') as storage_open:
         result = json.load(storage_open)
         if opt not in result.keys():
-            print(f'\n\t\t\tNo key {opt} was found in the storage\n')
-            print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')  # noqa: E501
+            print(f'\n\tNo key <<{opt}>> was found in storage\n')
+            print('++++++++++++++++++++++++++++++++++++++++++++++++++\n')  # noqa: E501
             sys.exit(1)
         # if opt in result.keys():
         else:
@@ -122,7 +94,6 @@ def get_value_by_key(opt: str) -> str:  # sourcery skip: de-morgan
             return result[opt]
 
 
-"""
 def write_key_val_pair_to_storage(key, val):
     with open(storage, 'r', encoding='utf-8') as storage_open:
         storage_loaded = json.load(storage_open)
@@ -145,7 +116,6 @@ def write_key_val_pair_to_storage(key, val):
             with open(storage, 'w', encoding='utf-8') as storage_open:  # noqa: E501
                 json.dump(cached, storage_open, indent=4)
                 return storage_open
-"""
 
 
 def main():
@@ -179,16 +149,8 @@ def main():
                 list_stored()
             elif opt == '--key':
                 get_value_by_key(arg)
-            elif opt == '--val':
-                return None
-                # write_key_val_pair_to_storage(args)
-            # elif str(opt) == '--key':
-                # with open(storage, mode='r', encoding='utf-8') as open_storage:  # noqa: E501
-                # storage_contents = json.load(open_storage)
-                # if arg not in storage_contents.keys():
-                # print('Key not found in storage')
-                # else:
-                # print(f'{opt}: {storage_contents.get(sys.argv[2])}')
+            elif sys.argv[2] == '--key' and sys.argv[4] == '--val':
+                write_key_val_pair_to_storage()
 
     except getopt.GetoptError as err:
         print(err)

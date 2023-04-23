@@ -16,7 +16,13 @@ to that effect, hence `KeyVa(l)Sto(re)Py`
 
 TODO:
 
-- [ ] Get the app to actual working state
-- [ ] Add an API (probably FastAPI-based,
-  already did it with Flask)
+- [x] Get the app to actual working state
+      (it does work, and actually **most**
+      of the planned functionality **is**
+      already operational, just not **ALL**
+      of it)
+- [ ] Add an _API_ (probably FastAPI-based,
+      already did it with Flask)
+- [ ] Make `write_key_val_pair_to_storage` actually functional
+- [ ] Implement custom path functionality
 - [X] A task marked done which in fact was never a task
