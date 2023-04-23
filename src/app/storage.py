@@ -34,10 +34,10 @@ with open(meta, 'r', encoding='utf-8') as meta_open:
 
 
 def usage():
-    usage_message = "\tUSAGE:\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"  # noqa: E501"
-    usage_pt1 = "\tstorage.py\t\t-h/--help\t\tCall this help and exit\n"
-    usage_pt2 = "\tstorage.py\t\t   --key=[KEY]\t\tGet the value of the key\n"
-    usage_pt3 = "\tstorage.py\t     --key --val=[VAL]\t\tSet the value of the key\n"  # noqa: E501
+    usage_message = '\n\t\t   USAGE:\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'  # noqa: E501"
+    usage_pt1 = 'storage -h/--help\t\tDisplay this help\n'
+    usage_pt2 = 'storage    --key=[KEY]\t\tGet value of a key\n'
+    usage_pt3 = 'storage    --key --val=[VAL]\tSet value of a key\n'  # noqa: E501
     # usage_pt4 = "\tstorage.py -d/--delete [KEY]\t\tDelete the key\n"
     print(usage_message, usage_pt1, usage_pt2, usage_pt3)
     return {}
@@ -46,8 +46,8 @@ def usage():
 def ver():
     with open(meta, 'r', encoding='utf-8') as R:
         contents = json.load(R)
-        print(f"\n\t\t\t\tVersion: {contents.get('version')}")
-        print('\n=================================================================================\n')  # noqa: E501
+        print(f"\t\tVersion: {contents.get('version')}")
+        print('==================================================\n')  # noqa: E501
         # return {}
 
         # return R_contents["version"] if R_contents['version'] else 'Achtung! No version number was detected'  # noqa: E501
@@ -91,7 +91,7 @@ def storage_check():
                 with open(storage, 'w', encoding='utf-8') as open_storage:
                     json.dump(dummy_data, open_storage, indent=4)
                     print('\n=======================================================\n')  # noqa: E501
-                    print(f'\t\tDatabase created:\n\n{storage}\n')
+                    print(f'\t\tStorage created:\n\n{storage}\n')
             elif i.lower() == 'n':
                 print('\n\tYou can point to a storage file in a non-default location')  # noqa: E501
                 choice = input('\n\t\tDo you want to specify a path? [Y/n]: ')
@@ -142,9 +142,8 @@ def write_key_val_pair_to_storage(key, val):
 
 
 def main():
-    print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
-    print('\n\t\tKeyVaStoPy -- a hastily designed key-value storage')
-    print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')  # noqa: E501
+    print('KeyVaStoPy -- a hastily designed key-value storage')
     storage_check()
 
     try:
