@@ -40,7 +40,7 @@ def usage():
     usage_pt3 = "\tstorage.py\t     --key --val=[VAL]\t\tSet the value of the key\n"  # noqa: E501
     # usage_pt4 = "\tstorage.py -d/--delete [KEY]\t\tDelete the key\n"
     print(usage_message, usage_pt1, usage_pt2, usage_pt3)
-    # return {}
+    return {}
 
 
 def ver():
@@ -102,11 +102,43 @@ def storage_check():
                     # pathlib.Path(path).parent.mkdir(parents=True)
 
 
-def get_value_by_key(opt: str) -> str:
+def get_value_by_key(opt: str) -> str:  # sourcery skip: de-morgan
     with open(storage, 'r', encoding='utf-8') as storage_open:
         result = json.load(storage_open)
-        print(f'\n\t\t\t\t\tResult:\n\n\t\t\t{opt}: {result[opt]}\t\n')
-        return result[opt]
+        if opt not in result.keys():
+            print(f'\n\t\t\tNo key {opt} was found in the storage\n')
+            print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')  # noqa: E501
+            sys.exit(1)
+        # if opt in result.keys():
+        else:
+            print(f'\nResult:\n\n{opt}: {result[opt]}\t\n')
+            return result[opt]
+
+
+"""
+def write_key_val_pair_to_storage(key, val):
+    with open(storage, 'r', encoding='utf-8') as storage_open:
+        storage_loaded = json.load(storage_open)
+        cached = dict(storage_loaded)
+
+        if cached.get(sys.argv[2]) and cached.get(sys.argv[2]) is None:
+            cached[sys.argv[2]].update(
+                {cached[sys.argv[2]]: sys.argv[4]})
+            print(cached[sys.argv[2]])
+            return storage_loaded
+        if cached[sys.argv[2]].isinstance(list):
+            cached[sys.argv[2]].append(sys.argv[4])
+            print({cached[sys.argv[2]]})
+            with open(storage, 'w', encoding='utf-8') as storage_open:  # noqa: E501
+                json.dump(cached, storage_open, indent=4)
+                return storage_open
+        if cached[sys.argv[2]].isinstance(dict) and len(sys.argv) < 5:
+            cached[sys.argv[2]].update(sys.argv[4])
+            cached[sys.argv[2]].update({sys.argv[4]: sys.argv[5]})  # noqa: E501
+            with open(storage, 'w', encoding='utf-8') as storage_open:  # noqa: E501
+                json.dump(cached, storage_open, indent=4)
+                return storage_open
+"""
 
 
 def main():
@@ -141,6 +173,9 @@ def main():
                 list_stored()
             elif opt == '--key':
                 get_value_by_key(arg)
+            elif opt == '--val':
+                return None
+                # write_key_val_pair_to_storage(args)
             # elif str(opt) == '--key':
                 # with open(storage, mode='r', encoding='utf-8') as open_storage:  # noqa: E501
                 # storage_contents = json.load(open_storage)
